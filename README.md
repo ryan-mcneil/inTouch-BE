@@ -10,3 +10,7 @@ From Terminal:
 `$ psql`
 
 `=# CREATE DATABASE in_touch_dev`
+
+Need to Install:
+
+`pip install djangorestframework_simplejwt`
