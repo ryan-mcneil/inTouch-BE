@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'graphene_django',
     'rest_framework',
     'api_v1',
     'django.contrib.admin',
@@ -41,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+GRAPHENE = {
+    'SCHEMA': 'in_touch_be.schema.schema'
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
