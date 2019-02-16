@@ -4,7 +4,7 @@ from graphene_django.types import DjangoObjectType, ObjectType
 from api_v1.models import Contact
 from django.contrib.auth.models import User
 from rest_framework.authentication import get_authorization_header
-import jwt
+from graphql_jwt.decorators import login_required
 
 
 class ContactType(DjangoObjectType):
@@ -19,21 +19,18 @@ class Query(ObjectType):
     contact = graphene.Field(ContactType, id=graphene.Int())
     contacts = graphene.List(ContactType)
 
+    @login_required
     def resolve_contact(self, info, **kwargs):
-        id = kwargs.get('id')
-
         user = info.context.user
-        if not user.is_authenticated:
-            raise Exception('Authentication credentials were not provided')
-
-        import code; code.interact(local=dict(globals(), **locals()))
-
-        if id is not None:
-            return Contact.objects.get(pk=id)
+        contact_id = kwargs.get('id')
+        if contact_id is not None:
+            return Contact.objects.get(pk=contact_id, user_id=user.id)
         return None
 
+    @login_required
     def resolve_contacts(self, info, **kwargs):
-        return Contact.objects.all()
+        user = info.context.user
+        return Contact.objects.filter(user_id=user.id)
 
 class ContactInput(graphene.InputObjectType):
     id = graphene.ID()
@@ -52,7 +49,9 @@ class CreateContact(graphene.Mutation):
     contact = graphene.Field(ContactType)
 
     @staticmethod
+    @login_required
     def mutate(root, info, input=None):
+        user = info.context.user
         ok = True
         contact_instance = Contact(
             id = input.id,
@@ -63,7 +62,7 @@ class CreateContact(graphene.Mutation):
             last_contacted = input.last_contacted,
             notes = input.notes,
         )
-        contact_instance.user_id = 2
+        contact_instance.user_id = user.id
         contact_instance.save()
         return CreateContact(ok=ok, contact=contact_instance)
 

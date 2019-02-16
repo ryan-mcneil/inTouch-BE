@@ -49,11 +49,6 @@ GRAPHENE = {
     ],
 }
 
-AUTHENTICATION_BACKENDS = [
-    'graphql_jwt.backends.JSONWebTokenBackend',
-    'django.contrib.auth.backends.ModelBackend',
-]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -76,7 +71,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.core.context_processors.request'
             ],
         },
     },
@@ -95,6 +89,10 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -113,12 +111,12 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-}
+#
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     ],
+# }
 
 
 # Internationalization
