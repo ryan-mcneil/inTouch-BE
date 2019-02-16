@@ -1,0 +1,17 @@
+[
+  {
+    "model": "api_v1.contact",
+    "pk": 4,
+    "fields": {
+      "name": "Mom",
+    },
+  },
+  {
+    "model": "api_v1.contact",
+    "pk": 5,
+    "fields": {
+      "name": "Dad",
+      "notes": "Some notes"
+    },
+  },
+]
