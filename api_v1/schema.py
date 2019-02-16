@@ -2,10 +2,18 @@ import graphene
 
 from graphene_django.types import DjangoObjectType, ObjectType
 from api_v1.models import Contact
+from django.contrib.auth.models import User
+from rest_framework.authentication import get_authorization_header
+import jwt
+
 
 class ContactType(DjangoObjectType):
     class Meta:
         model = Contact
+
+class UserType(DjangoObjectType):
+    class Meta:
+        model = User
 
 class Query(ObjectType):
     contact = graphene.Field(ContactType, id=graphene.Int())
@@ -13,6 +21,12 @@ class Query(ObjectType):
 
     def resolve_contact(self, info, **kwargs):
         id = kwargs.get('id')
+
+        user = info.context.user
+        if not user.is_authenticated:
+            raise Exception('Authentication credentials were not provided')
+
+        import code; code.interact(local=dict(globals(), **locals()))
 
         if id is not None:
             return Contact.objects.get(pk=id)
@@ -53,5 +67,24 @@ class CreateContact(graphene.Mutation):
         contact_instance.save()
         return CreateContact(ok=ok, contact=contact_instance)
 
+class CreateUser(graphene.Mutation):
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        username = graphene.String(required=True)
+        password = graphene.String(required=True)
+        email = graphene.String(required=True)
+
+    def mutate(self, info, username, password, email):
+        user = User(
+            username=username,
+            email=email,
+        )
+        user.set_password(password)
+        user.save()
+
+        return CreateUser(user=user)
+
 class Mutation(graphene.ObjectType):
     create_contact = CreateContact.Field()
+    create_user = CreateUser.Field()
