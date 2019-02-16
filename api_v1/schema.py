@@ -16,14 +16,14 @@ class Query(ObjectType):
 
         if id is not None:
             return Contact.objects.get(pk=id)
-
-            return None
+        return None
 
     def resolve_contacts(self, info, **kwargs):
         return Contact.objects.all()
 
 class ContactInput(graphene.InputObjectType):
     id = graphene.ID()
+    name = graphene.String(required=True)
     frequency = graphene.Int()
     priority = graphene.Int()
     next_reminder = graphene.types.datetime.Date()
@@ -41,13 +41,15 @@ class CreateContact(graphene.Mutation):
     def mutate(root, info, input=None):
         ok = True
         contact_instance = Contact(
+            id = input.id,
             name = input.name,
             frequency = input.frequency,
             priority = input.priority,
             next_reminder = input.next_reminder,
             last_contacted = input.last_contacted,
-            notes = input.notes
+            notes = input.notes,
         )
+        contact_instance.user_id = 2
         contact_instance.save()
         return CreateContact(ok=ok, contact=contact_instance)
 

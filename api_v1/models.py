@@ -8,8 +8,8 @@ from django.utils import timezone
 class Contact(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.TextField()
-    frequency = models.IntegerField(default=10)
-    priority = models.IntegerField(default=3)
-    next_reminder = models.DateField(default=timezone.now)
-    last_contacted = models.DateField(default=timezone.now)
-    notes = models.TextField(default="")
+    frequency = models.IntegerField(default=10, null=True)
+    priority = models.IntegerField(default=3, null=True)
+    next_reminder = models.DateField(default=timezone.now, null=True)
+    last_contacted = models.DateField(default=timezone.now, null=True)
+    notes = models.TextField(default="", null=True)
