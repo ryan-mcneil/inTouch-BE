@@ -15,8 +15,6 @@ This lets you use a generic secret_key.
 $ export DEBUG=True
 ```
 
-If you want to make a true secret_key, use
-
 Clone down the repo, activate the virtual environment, and install dependencies:
 ```
 $ git clone git@github.com:ryan-mcneil/inTouch-BE.git
