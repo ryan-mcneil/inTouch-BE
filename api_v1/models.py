@@ -13,3 +13,9 @@ class Contact(models.Model):
     next_reminder = models.DateField(default=timezone.now, null=True)
     last_contacted = models.DateField(default=timezone.now, null=True)
     notes = models.TextField(default="", null=True)
+
+class ContactDetail(models.Model):
+    contact = models.ForeignKey(Contact, on_delete=models.CASCADE, related_name='contactDetails')
+    label = models.TextField()
+    value = models.TextField()
+    preferred = models.BooleanField(default=False, null=True)
