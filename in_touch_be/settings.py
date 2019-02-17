@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
+import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -19,14 +20,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'hbm7v=0pnrisy!_pmtd5a6t)kfvk*vpyfx2_-9+1sts9&xr%by'
+DEBUG = os.environ.get('DEBUG', False)
+if DEBUG:
+    SECRET_KEY = 'hbm7v=0pnrisy!_pmtd5a6t)kfvk*vpyfx2_-9+1sts9&xr%by'
+else:
+    SECRET_KEY = os.environ.get('SECRET_KEY')
 
+# SECURITY WARNING: keep the secret key used in production secret!
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -77,7 +80,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'in_touch_be.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -137,3 +139,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+django_heroku.settings(locals())
