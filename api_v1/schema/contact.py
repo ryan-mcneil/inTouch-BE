@@ -43,7 +43,7 @@ class CreateContact(graphene.Mutation):
         user = info.context.user
         ok = True
         contact_instance = Contact(
-            id = input.id,
+            # id = input.id,
             name = input.name,
             frequency = input.frequency,
             priority = input.priority,
@@ -55,5 +55,34 @@ class CreateContact(graphene.Mutation):
         contact_instance.save()
         return CreateContact(ok=ok, contact=contact_instance)
 
+class UpdateContact(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+        input = ContactInput(required=True)
+
+    ok = graphene.Boolean()
+    contact = graphene.Field(ContactType)
+
+    @staticmethod
+    @login_required
+    def mutate(root, info, id, input=None):
+        user = info.context.user
+        ok = False
+        contact_instance = Contact.objects.get(pk=id)
+        if contact_instance and user.id == contact_instance.user_id:
+            ok = True
+            
+            # add the following once implemented
+            # contact_details = []
+            # occasions = []
+
+            for key in input:
+                setattr(contact_instance, key, input[key])
+
+            contact_instance.save()
+            return UpdateContact(ok=ok, contact=contact_instance)
+        return UpdateContact(ok=ok, contact=None)
+
 class Mutation(graphene.ObjectType):
     create_contact = CreateContact.Field()
+    update_contact = UpdateContact.Field()
