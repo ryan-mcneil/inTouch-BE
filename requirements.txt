@@ -1,0 +1,7 @@
+Django
+postgres
+psycopg2-binary
+psycopg2
+graphene_django
+django-graphql-jwt
+djangorestframework
