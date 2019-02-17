@@ -71,32 +71,13 @@ class UpdateContact(graphene.Mutation):
         contact_instance = Contact.objects.get(pk=id)
         if contact_instance and user.id == contact_instance.user_id:
             ok = True
+            
             # add the following once implemented
             # contact_details = []
             # occasions = []
 
-            # import code; code.interact(local=dict(globals(), **locals()))
-            # for key in input:
-            #     contact_instance[key] = input[key]
-            #     contact_instance.key = input[key]
-
-            if input.name:
-                contact_instance.name = input.name
-
-            if input.frequency:
-                contact_instance.frequency = input.frequency
-
-            if input.priority:
-                contact_instance.priority = input.priority
-
-            if input.next_reminder:
-                contact_instance.next_reminder = input.next_reminder
-
-            if input.last_contacted:
-                contact_instance.last_contacted = input.last_contacted
-
-            if input.notes:
-                contact_instance.notes = input.notes
+            for key in input:
+                setattr(contact_instance, key, input[key])
 
             contact_instance.save()
             return UpdateContact(ok=ok, contact=contact_instance)
