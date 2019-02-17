@@ -71,7 +71,7 @@ class UpdateContact(graphene.Mutation):
         contact_instance = Contact.objects.get(pk=id)
         if contact_instance and user.id == contact_instance.user_id:
             ok = True
-            
+
             # add the following once implemented
             # contact_details = []
             # occasions = []
@@ -83,6 +83,25 @@ class UpdateContact(graphene.Mutation):
             return UpdateContact(ok=ok, contact=contact_instance)
         return UpdateContact(ok=ok, contact=None)
 
+class DeleteContact(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+
+    ok = graphene.Boolean()
+
+    @staticmethod
+    @login_required
+    def mutate(root, info, id):
+        user = info.context.user
+        ok = False
+        contact_instance = Contact.objects.get(pk=id)
+        if contact_instance and user.id == contact_instance.user_id:
+            ok = True
+            contact_instance.delete()
+            return DeleteContact(ok=ok)
+        return DeleteContact(ok=ok)
+
 class Mutation(graphene.ObjectType):
     create_contact = CreateContact.Field()
     update_contact = UpdateContact.Field()
+    delete_contact = DeleteContact.Field()
