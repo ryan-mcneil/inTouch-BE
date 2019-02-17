@@ -1,7 +1,7 @@
 import graphene
 import graphql_jwt
 import api_v1.schema
-from api_v1.schema import contact, user
+from api_v1.schema import contact, contact_detail, user
 
 class Query(contact.Query, graphene.ObjectType):
     pass
