@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import django_heroku
 import os
+# from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,7 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'hbm7v=0pnrisy!_pmtd5a6t)kfvk*vpyfx2_-9+1sts9&xr%by'
+# get_random_secret_key()
+# SECRET_KEY = '*ijp#24z-7+df^8ojjyouf%ayz7bo73*20c^ghtlh^igt6fgu4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
