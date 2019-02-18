@@ -21,18 +21,23 @@ class Query(ObjectType):
         user = info.context.user
         return Contact.objects.filter(user_id=user.id)
 
-class ContactInput(graphene.InputObjectType):
-    id = graphene.ID()
-    name = graphene.String(required=True)
+class ContactFields(graphene.AbstractType):
+    name = graphene.String()
     frequency = graphene.Int()
     priority = graphene.Int()
     next_reminder = graphene.types.datetime.Date()
     last_contacted = graphene.types.datetime.Date()
     notes = graphene.String()
 
+class CreateContactInput(graphene.InputObjectType, ContactFields):
+    name = graphene.String(required=True)
+
+class UpdateContactInput(graphene.InputObjectType, ContactFields):
+    pass
+
 class CreateContact(graphene.Mutation):
     class Arguments:
-        input = ContactInput(required=True)
+        input = CreateContactInput(required=True)
 
     ok = graphene.Boolean()
     contact = graphene.Field(ContactType)
@@ -53,7 +58,7 @@ class CreateContact(graphene.Mutation):
 class UpdateContact(graphene.Mutation):
     class Arguments:
         id = graphene.Int(required=True)
-        input = ContactInput(required=True)
+        input = UpdateContactInput(required=True)
 
     ok = graphene.Boolean()
     contact = graphene.Field(ContactType)

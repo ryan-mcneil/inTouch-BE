@@ -7,7 +7,7 @@ from django.utils import timezone
 
 class Contact(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.TextField()
+    name = models.TextField(blank=False)
     frequency = models.IntegerField(default=10)
     priority = models.IntegerField(default=3)
     next_reminder = models.DateField(default=timezone.now)
