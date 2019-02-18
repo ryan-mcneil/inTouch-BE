@@ -22,6 +22,7 @@
 	* [Backend Tech Stack](#backend-tech-stack)
 	* [Getting Started](#getting-started)
 	* [Setup](#setup)
+	* [Pull Requests](#pull-requests)
 	* [Core Team](#core-team)
 
 <!-- /code_chunk_output -->
@@ -298,40 +299,55 @@ JSON Response:
 
 # For Contributors
 ## Backend Tech Stack
-  - Django 2.1.7
-  - Python 3.2.7
-  - GraphQL with Graphene
+  - Django v2.1.7
+  - Python v3.2.7
+  - GraphQL with Graphene v2.1.3
+  - PostgreSQL v11.1
 
 ## Getting Started
 This is an ongoing OpenSource project that we want to make as useful as possible without experiencing feature bloat. Contributions are welcome and encouraged! To make it as easy as possible for future contributors, we're committed to keeping our test-coverage high and our tech-debt low, so pull requests will be thoroughly reviewed and vetted before merging.
 
 ## Setup
 
-Set up a python virtual environment where-ever you want it to live:
-```
-
-```
-
-Next, set your DEBUG environment variable to True (for the virtual environment).
-This lets you use a generic secret_key.
+Set up a virtual debug environment where-ever you want it to live, then activate it:
 ```bash
-$ export DEBUG=True
-```
+$ python3 -m venv $PATH_TO_VENV/dj-env
+$ echo "export DEBUG=True" >> $PATH_TO_VENV/dj-env/postactivate
+$ source <PATH_TO_VENV>/bin/activate
 
-Clone down the repo, activate the virtual environment, and install dependencies:
+```
+We like to make a `dj-env` for Django specifically. The second command creates a script to run after the virtual environment is activated. You can also set up Django specific bash aliases in this file.
+
+The `DEBUG=True` is used in `settings.py` to use a generic secret_key for local development.
+
+Next, clone down the repo and install dependencies:
 ```bash
 $ git clone git@github.com:ryan-mcneil/inTouch-BE.git
 $ cd inTouch-BE
-$ source <PATH_TO_VENV>/bin/activate
 $ pip install -r requirements.txt
 ```
-
-
-Next, set up a local database
+Set up a local database:
 ```bash
 $ psql
 => CREATE DATABASE in_touch_dev
 ```
+Then run migrations:
+```bash
+$ python manage.py migrate
+```
+Now you should be able to run the server locally:
+```
+$ python manage.py runserver
+```
+Visit http://localhost:8000/api/v1/data to interact using the GraphiQL GUI and view the schema documentation.
+We recommend creating a superuser for your local server:
+```bash
+$ python manage.py createsuperuser
+```
+After that, you can visit http://localhost:8000/admin and log in. The admin account you log in as will be used for authenticating any requests made through the GraphiQL interface. To directly manipulate the authorization header, we recommend using [Insomnia](https://insomnia.rest/download/#mac), which was designed with GraphQL in mind. [Postman](https://www.getpostman.com/) is an excellent choice also.
+
+## Pull Requests
+When you make changes you want to incorporate, please submit a PR to the `dev` branch. We have a live staging deployment on Heroku that we use to check new functionality and compatibility before deploying to master and deploying to production. (At the moment, we actually don't have a production deployment, but we will soon!)
 
 ## Core Team
 * [Ryan McNeil](https://github.com/ryan-mcneil)
