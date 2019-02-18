@@ -42,15 +42,10 @@ class CreateContact(graphene.Mutation):
     def mutate(root, info, input=None):
         user = info.context.user
         ok = True
-        contact_instance = Contact(
-            # id = input.id,
-            name = input.name,
-            frequency = input.frequency,
-            priority = input.priority,
-            next_reminder = input.next_reminder,
-            last_contacted = input.last_contacted,
-            notes = input.notes,
-        )
+        contact_instance = Contact()
+        for key in input:
+            setattr(contact_instance, key, input[key])
+            
         contact_instance.user_id = user.id
         contact_instance.save()
         return CreateContact(ok=ok, contact=contact_instance)
