@@ -333,6 +333,7 @@ $ psql
 ```
 
 ## Core Team
-Ryan McNeil
-William Fischer
-Rajaa
+* [Ryan McNeil](https://github.com/ryan-mcneil)
+* [William Fischer](https://github.com/wfischer42)
+* [Rajaa Boulassouak](https://github.com/RajaaBoulassouak)
+* [Derek Hanciles](https://github.com/Dhanciles)
