@@ -3,7 +3,7 @@ import graphql_jwt
 import api_v1.schema
 from api_v1.schema import contact, contact_detail, occasion, user
 
-class Query(contact.Query, graphene.ObjectType):
+class Query(contact.Query, occasion.Query, graphene.ObjectType):
     pass
 
 class Mutation(contact.Mutation, user.Mutation, occasion.Mutation, graphene.ObjectType):
