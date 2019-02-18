@@ -25,10 +25,11 @@ class UpdateOccasionInput(graphene.InputObjectType, OccasionFields):
     pass
 
 class CreateOccasion(graphene.Mutation):
-    Output = OccasionType
     class Arguments:
         contact_id = graphene.Int(required = True)
         input = CreateOccasionInput(required = True)
+
+    occasion = graphene.Field(OccasionType)
 
     @staticmethod
     @login_required
@@ -42,7 +43,7 @@ class CreateOccasion(graphene.Mutation):
                 setattr(occasion_instance, key, input[key])
             occasion_instance.contact_id = contact_instance.id
             occasion_instance.save()
-            return occasion_instance
+            return CreateOccasion(occasion=occasion_instance)
         return None
 
 class Mutation(graphene.ObjectType):
