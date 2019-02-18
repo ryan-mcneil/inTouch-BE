@@ -15,7 +15,12 @@ class Contact(models.Model):
     notes = models.TextField(default="")
 
 class ContactDetail(models.Model):
-    contact = models.ForeignKey(Contact, on_delete=models.CASCADE, related_name='contactDetails')
+    contact = models.ForeignKey(Contact, on_delete=models.CASCADE, related_name='contact_details')
     label = models.TextField()
     value = models.TextField()
     preferred = models.BooleanField(default=False)
+
+class Occasion(models.Model):
+    contact = models.ForeignKey(Contact, on_delete=models.CASCADE, related_name='occasions')
+    description = models.TextField()
+    date = models.DateField()

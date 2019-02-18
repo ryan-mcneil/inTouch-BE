@@ -45,7 +45,7 @@ class CreateContact(graphene.Mutation):
         contact_instance = Contact()
         for key in input:
             setattr(contact_instance, key, input[key])
-            
+
         contact_instance.user_id = user.id
         contact_instance.save()
         return CreateContact(ok=ok, contact=contact_instance)
