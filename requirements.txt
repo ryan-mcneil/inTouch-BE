@@ -7,3 +7,4 @@ django-graphql-jwt
 djangorestframework
 gunicorn
 django-heroku
+django-cors-headers
