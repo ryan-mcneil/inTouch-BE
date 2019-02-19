@@ -71,5 +71,28 @@ class CreateOccasion(graphene.Mutation):
             return CreateOccasion(occasion=occasion_instance, contact=contact_instance)
         return None
 
+class UpdateOccasion(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+        input = UpdateOccasionInput(required=True)
+
+    ok = graphene.Boolean()
+    occasion = graphene.Field(OccasionType)
+
+    @staticmethod
+    @login_required
+    def mutate(root, info, id, input=None):
+        user = info.context.user
+        ok = False
+        occasion_instance = Occasion.objects.get(pk=id, contact__user_id = user.id)
+        if occasion_instance:
+            ok = True
+            for key in input:
+                setattr(occasion_instance, key, input[key])
+            occasion_instance.save()
+            return UpdateOccasion(ok=ok, occasion=occasion_instance)
+        return UpdateOccasion(ok=ok, occasion=None)
+
 class Mutation(graphene.ObjectType):
     create_occasion = CreateOccasion.Field()
+    update_occasion = UpdateOccasion.Field()
