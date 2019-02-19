@@ -13,6 +13,9 @@ class CreateContactDetailInput(graphene.InputObjectType, ContactDetailFields):
     label = graphene.String(required=True)
     value = graphene.String(required=True)
 
+class UpdateContactDetailInput(graphene.InputObjectType, ContactDetailFields):
+    pass
+
 class CreateContactDetail(graphene.Mutation):
     class Arguments:
         contact_id = graphene.Int(required = True)
@@ -36,5 +39,28 @@ class CreateContactDetail(graphene.Mutation):
             return CreateContactDetail(contact_detail=contact_detail_instance)
         return None
 
+class UpdateContactDetail(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+        contact_id = graphene.Int(required = True)
+        input = UpdateContactDetailInput(required=True)
+
+    contact_detail = graphene.Field(ContactDetailType)
+
+    @staticmethod
+    @login_required
+    def mutate(root, info, id, contact_id, input=None):
+        user = info.context.user
+        contact_instance = Contact.objects.get(pk=contact_id, user_id=user.id)
+        contact_detail_instance = ContactDetail.objects.get(pk=id, contact_id=contact_id)
+        if contact_instance and contact_detail_instance:
+            for key in input:
+                setattr(contact_detail_instance, key, input[key])
+            contact_detail_instance.save()
+            return UpdateContactDetail(contact_detail=contact_detail_instance)
+        return None
+    
+
 class Mutation(graphene.ObjectType):
     create_contact_detail = CreateContactDetail.Field()
+    update_contact_detail = UpdateContactDetail.Field()
