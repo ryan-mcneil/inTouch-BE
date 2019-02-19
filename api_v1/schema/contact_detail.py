@@ -22,13 +22,16 @@ class CreateContactDetail(graphene.Mutation):
         input = CreateContactDetailInput(required=True)
 
     contact_detail = graphene.Field(ContactDetailType)
+    ok = graphene.Boolean()
 
     @staticmethod
     @login_required
     def mutate(root, info, contact_id, input=None):
+        ok = False
         user = info.context.user
-        contact_instance = Contact.objects.get(pk=contact_id, user_id=user.id)
+        contact_instance = Contact.objects.filter(pk=contact_id, user_id=user.id)[0]
         if contact_instance:
+            ok = True
             contact_detail_instance = ContactDetail()
             for key in input:
                 setattr(contact_detail_instance, key, input[key])
@@ -36,34 +39,35 @@ class CreateContactDetail(graphene.Mutation):
                 contact_detail_instance.preferred = True
             contact_detail_instance.contact_id = contact_instance.id
             contact_detail_instance.save()
-            return CreateContactDetail(contact_detail=contact_detail_instance)
-        return None
+            return CreateContactDetail(ok=ok, contact_detail=contact_detail_instance)
+        return CreateContactDetail(ok=ok)
 
 class UpdateContactDetail(graphene.Mutation):
     class Arguments:
         id = graphene.Int(required=True)
         input = UpdateContactDetailInput(required=True)
 
+    ok = graphene.Boolean()
     contact_detail = graphene.Field(ContactDetailType)
 
     @staticmethod
     @login_required
     def mutate(root, info, id, input=None):
         user = info.context.user
-        contact_detail_instance = ContactDetail.objects.get(pk=id)
-        contact_instance = Contact.objects.get(pk=contact_detail_instance.contact_id, user_id=user.id)
-        if contact_instance and contact_detail_instance:
+        ok = False
+        contact_detail_instance = ContactDetail.objects.filter(pk=id, contact__user_id=user.id)[0]
+        if contact_detail_instance:
+            ok = True
             for key in input:
                 setattr(contact_detail_instance, key, input[key])
             contact_detail_instance.save()
-            return UpdateContactDetail(contact_detail=contact_detail_instance)
-        return None
+            return UpdateContactDetail(ok=ok, contact_detail=contact_detail_instance)
+        return UpdateContactDetail(ok=ok, occasion=None)
 
 class DeleteContactDetail(graphene.Mutation):
     class Arguments:
         id = graphene.Int(required=True)
 
-    contact_detail = graphene.Field(ContactDetailType)
     ok = graphene.Boolean()
 
     @staticmethod
@@ -71,12 +75,10 @@ class DeleteContactDetail(graphene.Mutation):
     def mutate(root, info, id):
         user = info.context.user
         ok = False
-        contact_detail_instance = ContactDetail.objects.get(pk=id)
-        contact_instance = Contact.objects.get(pk=contact_detail_instance.contact_id, user_id=user.id)
-        if contact_instance and contact_detail_instance:
-            ok = True
+        contact_detail_instance = ContactDetail.objects.filter(pk=id, contact__user_id = user.id)
+        if contact_detail_instance:
             contact_detail_instance.delete()
-            return DeleteContactDetail(ok=ok)
+            ok = True
         return DeleteContactDetail(ok=ok)
 
 
