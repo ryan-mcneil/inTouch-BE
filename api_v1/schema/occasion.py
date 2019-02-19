@@ -1,13 +1,11 @@
 from .schema_helper import *
 from api_v1.schema.contact import ContactType
-from datetime import datetime, timedelta
 from calendar import monthrange
 from functools import reduce
 from django.db.models.functions import Extract, Cast
-from django.db.models import F, IntegerField
+from django.db.models import Q, F, IntegerField
 import operator
 
-from django.db.models import Q
 
 class OccasionType(DjangoObjectType):
     class Meta:
@@ -37,6 +35,7 @@ class Query(graphene.ObjectType):
 
         monthdays = (dict(zip(("date__month", "date__day"), t))
             for t in monthdays)
+
 
         # Compose the djano.db.models.Q objects together for a single query.
         query = reduce(operator.or_, (Q(**d) for d in monthdays))

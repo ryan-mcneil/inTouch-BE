@@ -7,6 +7,7 @@ class ContactType(DjangoObjectType):
 class Query(ObjectType):
     contact = graphene.Field(ContactType, id=graphene.Int())
     contacts = graphene.List(ContactType)
+    contact_suggestions = graphene.List(ContactType, lead_time=graphene.Int())
 
     @login_required
     def resolve_contact(self, info, **kwargs):
@@ -20,6 +21,13 @@ class Query(ObjectType):
     def resolve_contacts(self, info, **kwargs):
         user = info.context.user
         return Contact.objects.filter(user_id=user.id)
+
+    def resolve_contact_suggestions(self, info, **kwargs):
+        user = info.context.user
+        lead_time = kwargs.get('lead_time', 7)
+        now = datetime.now()
+        then = now + timedelta(days)
+
 
 class ContactFields(graphene.AbstractType):
     name = graphene.String()
@@ -50,7 +58,7 @@ class CreateContact(graphene.Mutation):
         contact_instance = Contact()
         for key in input:
             setattr(contact_instance, key, input[key])
-
+        contact_instance.next_reminder = contact_instance.last_contacted + timedelta(contact_instance.frequency)
         contact_instance.user_id = user.id
         contact_instance.save()
         return CreateContact(ok=ok, contact=contact_instance)
@@ -72,13 +80,10 @@ class UpdateContact(graphene.Mutation):
         if contact_instance and user.id == contact_instance.user_id:
             ok = True
 
-            # add the following once implemented
-            # contact_details = []
-            # occasions = []
-
             for key in input:
                 setattr(contact_instance, key, input[key])
-
+            if input.last_contacted:
+                contact_instance.next_reminder = contact_instance.last_contacted + timedelta(contact_instance.frequency)
             contact_instance.save()
             return UpdateContact(ok=ok, contact=contact_instance)
         return UpdateContact(ok=ok, contact=None)
