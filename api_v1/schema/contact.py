@@ -24,10 +24,13 @@ class Query(ObjectType):
 
     def resolve_contact_suggestions(self, info, **kwargs):
         user = info.context.user
-        lead_time = kwargs.get('lead_time', 7)
+        days = kwargs.get('lead_time', 7)
         now = datetime.now()
-        then = now + timedelta(days)
+        later_date = now + timedelta(days)
 
+        contacts =  Contact.objects.filter(next_reminder__lt=later_date, user_id=user.id)
+
+        return contacts.order_by('next_reminder', 'priority')
 
 class ContactFields(graphene.AbstractType):
     name = graphene.String()
