@@ -59,8 +59,30 @@ class UpdateContactDetail(graphene.Mutation):
             contact_detail_instance.save()
             return UpdateContactDetail(contact_detail=contact_detail_instance)
         return None
-    
+
+class DeleteContactDetail(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+        contact_id = graphene.Int(required = True)
+
+    contact_detail = graphene.Field(ContactDetailType)
+    ok = graphene.Boolean()
+
+    @staticmethod
+    @login_required
+    def mutate(root, info, id, contact_id):
+        user = info.context.user
+        ok = False
+        contact_instance = Contact.objects.get(pk=contact_id, user_id=user.id)
+        contact_detail_instance = ContactDetail.objects.get(pk=id, contact_id=contact_id)
+        if contact_instance and contact_detail_instance:
+            ok = True
+            contact_detail_instance.delete()
+            return DeleteContactDetail(ok=ok)
+        return DeleteContactDetail(ok=ok)
+
 
 class Mutation(graphene.ObjectType):
     create_contact_detail = CreateContactDetail.Field()
     update_contact_detail = UpdateContactDetail.Field()
+    delete_contact_detail = DeleteContactDetail.Field()
