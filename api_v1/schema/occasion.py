@@ -75,17 +75,16 @@ class CreateOccasion(graphene.Mutation):
     def mutate(root, info, contact_id, input = None):
         ok = False
         user = info.context.user
-        contact_instance = Contact.objects.filter(pk=contact_id, user_id=user.id)
+        contact_instance = Contact.objects.filter(pk=contact_id, user_id=user.id)[0]
         if contact_instance:
             ok = True
-            contact_instance = contact_instance[0]
             occasion_instance = Occasion()
             for key in input:
                 setattr(occasion_instance, key, input[key])
             occasion_instance.contact_id = contact_instance.id
             occasion_instance.save()
-            return CreateOccasion(ok = ok, occasion=occasion_instance)
-        return CreateOccasion(ok = ok)
+            return CreateOccasion(ok=ok, occasion=occasion_instance)
+        return CreateOccasion(ok=ok)
 
 class UpdateOccasion(graphene.Mutation):
     class Arguments:
@@ -100,13 +99,13 @@ class UpdateOccasion(graphene.Mutation):
     def mutate(root, info, id, input=None):
         user = info.context.user
         ok = False
-        occasion_instance = Occasion.objects.filter(pk=id, contact__user_id = user.id)
+        occasion_instance = Occasion.objects.filter(pk=id, contact__user_id = user.id)[0]
         if occasion_instance:
             ok = True
             for key in input:
-                setattr(occasion_instance[0], key, input[key])
+                setattr(occasion_instance, key, input[key])
             occasion_instance.save()
-            return UpdateOccasion(ok=ok, occasion=occasion_instance[0])
+            return UpdateOccasion(ok=ok, occasion=occasion_instance)
         return UpdateOccasion(ok=ok, occasion=None)
 
 class DeleteOccasion(graphene.Mutation):
@@ -120,11 +119,11 @@ class DeleteOccasion(graphene.Mutation):
     def mutate(root, info, id):
         user = info.context.user
         ok = False
-        occasion = Occasion.objects.filter(pk=id, contact__user_id = user.id)
-        if occasion:
-            occasion.delete()
+        occasion_instance = Occasion.objects.filter(pk=id, contact__user_id = user.id)
+        if occasion_instance:
+            occasion_instance.delete()
             ok = True
-        return UpdateOccasion(ok=ok)
+        return DeleteOccasion(ok=ok)
 
 class Mutation(graphene.ObjectType):
     create_occasion = CreateOccasion.Field()
