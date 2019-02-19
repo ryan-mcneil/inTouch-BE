@@ -1,7 +1,10 @@
 from .schema_helper import *
 from api_v1.schema.contact import ContactType
 from datetime import datetime, timedelta
+from calendar import monthrange
 from functools import reduce
+from django.db.models.functions import Extract, Cast
+from django.db.models import F, IntegerField
 import operator
 
 from django.db.models import Q
@@ -20,8 +23,10 @@ class Query(graphene.ObjectType):
         now = datetime.now()
         then = now + timedelta(days)
 
-        ### Solution credited to "twneale"
-        # I get it, but I wouldn't have thought of it.
+        # Get number of days in current month
+        _, days_in_month = monthrange(now.year, now.month)
+
+        ### Solution for querying credited to "twneale"
         # https://stackoverflow.com/questions/6128921/queryset-of-people-with-a-birthday-in-the-next-x-days
 
         # Build the list of month/day tuples.
@@ -35,7 +40,16 @@ class Query(graphene.ObjectType):
 
         # Compose the djano.db.models.Q objects together for a single query.
         query = reduce(operator.or_, (Q(**d) for d in monthdays))
-        return Occasion.objects.filter(query, contact__user_id=user.id)
+
+        # Query for matching monthday pairs for the authorized user.
+        occasions = Occasion.objects.filter(query, contact__user_id=user.id)
+
+        # Extract the day and month fields as integers
+        occasions = occasions.annotate(month=Cast(Extract('date','month'), IntegerField()),day=Cast(Extract('date','day'), IntegerField()))
+
+        # Order by "time from now", evaluate expression, and return
+        return occasions.order_by(((F('month') - now.month)+12) % 12, 'day')
+
 
 class OccasionFields(graphene.AbstractType):
     description = graphene.String()
@@ -54,22 +68,65 @@ class CreateOccasion(graphene.Mutation):
         input = CreateOccasionInput(required = True)
 
     occasion = graphene.Field(OccasionType)
-    contact = graphene.Field(ContactType)
+    ok = graphene.Boolean()
 
     @staticmethod
     @login_required
     def mutate(root, info, contact_id, input = None):
-
+        ok = False
         user = info.context.user
-        contact_instance = Contact.objects.get(pk=contact_id, user_id=user.id)
+        contact_instance = Contact.objects.filter(pk=contact_id, user_id=user.id)
         if contact_instance:
+            ok = True
+            contact_instance = contact_instance[0]
             occasion_instance = Occasion()
             for key in input:
                 setattr(occasion_instance, key, input[key])
             occasion_instance.contact_id = contact_instance.id
             occasion_instance.save()
-            return CreateOccasion(occasion=occasion_instance, contact=contact_instance)
-        return None
+            return CreateOccasion(ok = ok, occasion=occasion_instance)
+        return CreateOccasion(ok = ok)
+
+class UpdateOccasion(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+        input = UpdateOccasionInput(required=True)
+
+    ok = graphene.Boolean()
+    occasion = graphene.Field(OccasionType)
+
+    @staticmethod
+    @login_required
+    def mutate(root, info, id, input=None):
+        user = info.context.user
+        ok = False
+        occasion_instance = Occasion.objects.filter(pk=id, contact__user_id = user.id)
+        if occasion_instance:
+            ok = True
+            for key in input:
+                setattr(occasion_instance[0], key, input[key])
+            occasion_instance.save()
+            return UpdateOccasion(ok=ok, occasion=occasion_instance[0])
+        return UpdateOccasion(ok=ok, occasion=None)
+
+class DeleteOccasion(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+
+    ok = graphene.Boolean()
+
+    @staticmethod
+    @login_required
+    def mutate(root, info, id):
+        user = info.context.user
+        ok = False
+        occasion = Occasion.objects.filter(pk=id, contact__user_id = user.id)
+        if occasion:
+            occasion.delete()
+            ok = True
+        return UpdateOccasion(ok=ok)
 
 class Mutation(graphene.ObjectType):
     create_occasion = CreateOccasion.Field()
+    update_occasion = UpdateOccasion.Field()
+    delete_occasion = DeleteOccasion.Field()
