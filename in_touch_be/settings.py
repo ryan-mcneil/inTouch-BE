@@ -93,6 +93,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'in_touch_dev',
+        'USERNAME': 'root',
     }
 }
 
