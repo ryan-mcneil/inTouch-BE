@@ -15,10 +15,17 @@
 			* [Contacts](#contacts)
 			* [Single Contact](#single-contact)
 			* [Suggested Contacts](#suggested-contacts)
+			* [Upcoming Occasions](#upcoming-occasions)
 		* [Mutations](#mutations)
 			* [Create Contact](#create-contact)
 			* [Update Contact](#update-contact)
 			* [Delete Contact](#delete-contact)
+			* [Create Contact Detail](#create-contact-detail)
+			* [Update Contact Detail](#update-contact-detail)
+			* [Delete Contact Detail](#delete-contact-detail)
+			* [Create Occasion](#create-occasion)
+			* [Update Occasion](#update-occasion)
+			* [Delete Occasion](#delete-occasion)
 * [For Contributors](#for-contributors)
 	* [Backend Tech Stack](#backend-tech-stack)
 	* [Getting Started](#getting-started)
@@ -108,7 +115,7 @@ This will return :
 This token is used for `Authorization` of future requests.
 
 #### Authorize a Request
-Endpoints requiring authorization (i.e. the rest of then) must be sent with the header:
+Endpoints requiring authorization (i.e. the rest of them) must be sent with the header:
 ```json
 "Authorization": "JWT %user-access-token%"
 ```
@@ -133,6 +140,11 @@ query {
       value
       preferred
     }
+    occasions {
+      id
+      description
+      date
+    }
   }
 }
 ```
@@ -148,7 +160,13 @@ JSON Response (limited attributes):
           {
             "label": "phone",
             "value": "123-456-7890",
-            "preferred": true,
+            "preferred": true
+          }
+        ],
+        "occasions": [
+          {
+            "description": "birthday",
+            "date": "1970-02-28"
           }
         ]
       },
@@ -178,6 +196,11 @@ query {
       value
       preferred
     }
+    occasions {
+      id
+      description
+      date
+    }
   }
 }
 ```
@@ -193,6 +216,12 @@ JSON Response (limited attributes shown):
           "label": "phone",
           "value": "123-456-7890",
         }
+      ],
+      "occasions": [
+      	{
+          "description": "birthday",
+          "date": "1970-02-28"
+      	}
       ]
     }
   }
@@ -238,7 +267,13 @@ JSON Response (limited attributes shown):
           {
             "label": "phone",
             "value": "123-456-7890",
-            "preferred": true,
+            "preferred": true
+          }
+        ],
+        "occasions": [
+          {
+            "description": "birthday",
+            "date": "1970-02-28"
           }
         ]
       },
@@ -256,8 +291,8 @@ JSON Response (limited attributes shown):
 A contact can be created with a name (required) and any additional attributes with the following query:
 
 ```graphql
-mutation CreateContact($contactInput:ContactInput!) {
-  createContact(input:$contactInput){
+mutation CreateContact($input:CreateContactInput!) {
+  createContact(input:$input){
     ok
     contact {
       name
@@ -268,7 +303,7 @@ mutation CreateContact($contactInput:ContactInput!) {
 and variables:
 ```json
 {
-  "contactInput": {
+  "input": {
     "name": "Dad",
     "notes": "Some Notes"
   }
@@ -291,8 +326,8 @@ JSON Response:
 A contact can be updated by providing the contact id and any or all attributes with the following query:
 
 ```graphql
-mutation UpdateContact($id:Int!, $contactInput:ContactInput!) {
-  updateContact(id:$id, input:$contactInput){
+mutation UpdateContact($id:Int!, $input:UpdateContactInput!) {
+  updateContact(id:$id, input:$input){
     ok
     contact {
       name
@@ -303,7 +338,7 @@ mutation UpdateContact($id:Int!, $contactInput:ContactInput!) {
 and variables:
 ```json
 {
-  "contactInput": {
+  "input": {
     "name": "Father",
     "priority": "3",
     "lastContacted": "2019-03-02",
@@ -345,6 +380,201 @@ JSON Response:
 {
   "data": {
     "deleteContact": {
+      "ok": true,
+    }
+  }
+}
+```
+#### Create Contact Detail
+A contact detail must be created with a label and value with the following query:
+
+```graphql
+mutation CreateContactDetail($contact_id:Int!, $input:CreateContactDetailInput!) {
+  createContactDetail(contactId:$contact_id, input:$input){
+    ok
+    contactDetail {
+      label
+    }
+  }
+}
+```
+and variables:
+```json
+{
+  "input": {
+    "label": "Phone",
+    "value": "303-123-4567"
+  },
+  "contact_id": 1
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "createContactDetail": {
+      "ok": true,
+      "contactDetail": {
+        "label": "Phone"
+      }
+    }
+  }
+}
+```
+#### Update Contact Detail
+A contact detail can be updated with a new label and/or value with the following query:
+
+```graphql
+mutation updateContactDetail($id:Int!, $input:UpdateContactDetailInput!) {
+  updateContactDetail(id:$id, input:$input){
+    ok
+    contactDetail {
+      label
+    }
+  }
+}
+```
+and variables:
+```json
+{
+  "input": {
+    "label": "Cell",
+    "value": "303-123-4568"
+  },
+  "id": 1
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "updateContactDetail": {
+      "ok": true,
+      "contactDetail": {
+        "label": "Cell"
+      }
+    }
+  }
+}
+```
+#### Delete Contact Detail
+A contact detail can be deleted by providing the contact detail id with the following query:
+```graphql
+mutation DeleteContactDetail($id:Int!) {
+  deleteContactDetail(id:$id){
+    ok
+  }
+}
+```
+and variables:
+```json
+{
+  "id": 3
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "deleteContactDetail": {
+      "ok": true,
+    }
+  }
+}
+```
+
+#### Create Occasion
+A occasion must be created with a description and date with the following query:
+
+```graphql
+mutation CreateOccasion($contact_id:Int!, $input:CreateOccasionInput!) {
+  createOccasion(contactId:$contact_id, input:$input){
+    ok
+    occasion {
+      description
+    }
+  }
+}
+```
+and variables:
+```json
+{
+  "input": {
+    "description": "birthday",
+    "date": "1960-05-07"
+  },
+  "contact_id": 1
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "createOccasion": {
+      "ok": true,
+      "occasion": {
+        "description": "birthday"
+      }
+    }
+  }
+}
+```
+#### Update Occasion
+A occasion can be updated with a new description and/or date with the following query:
+
+```graphql
+mutation updateOccasion($id:Int!, $input:UpdateOccasionInput!) {
+  updateOccasion(id:$id, input:$input){
+    ok
+    occasion {
+      description
+    }
+  }
+}
+```
+and variables:
+```json
+{
+  "input": {
+    "description": "birthday",
+    "date": "1960-05-07"
+  },
+  "id": 1
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "updateOccasion": {
+      "ok": true,
+      "occasion": {
+        "description": "birthday"
+      }
+    }
+  }
+}
+```
+#### Delete Occasion
+A occasion can be deleted by providing the occasion id with the following query:
+```graphql
+mutation DeleteOccasion($id:Int!) {
+  deleteOccasion(id:$id){
+    ok
+  }
+}
+```
+and variables:
+```json
+{
+  "id": 3
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "deleteOccasion": {
       "ok": true,
     }
   }
