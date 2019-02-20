@@ -285,49 +285,7 @@ JSON Response (limited attributes shown):
   }
 }
 ```
-#### Upcoming Occasions
-A query can be made for upcoming occasions, for a user specified leadTime = 7 (days), with any or all of the following attributes:
-```graphql
-query {
-  upcomingOccasions(leadTime: 7) {
-    id
-    description
-    date
-    contact {
-      id
-      name
-      ...
-    }
-  }
-}
-```
-JSON Response (limited attributes shown):
-```json
-{
-  "data": {
-    "upcomingOccasions": [
-      {
-        "description": "birthday",
-        "date": "1970-02-28",
-        "contact": [
-          {
-            "name": "Mom",
-          }
-        ]
-      },
-      {
-        "description": "Anniversary",
-        "date": "1970-03-01",
-        "contact": [
-          {
-            "name": "Michael",
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+
 ### Mutations
 #### Create Contact
 A contact can be created with a name (required) and any additional attributes with the following query:
