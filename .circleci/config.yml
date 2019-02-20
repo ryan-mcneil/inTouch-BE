@@ -17,10 +17,10 @@ jobs:
           PGHOST: 127.0.0.1
           PGUSER: root
 
-      - image: circleci/postgres:9.6.2
-        environment:
-          POSTGRES_USER: root
-          POSTGRES_DB: in_touch_dev
+      # - image: circleci/postgres:9.6.2
+      #   environment:
+      #     POSTGRES_USER: root
+      #     POSTGRES_DB: in_touch_dev
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
