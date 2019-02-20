@@ -1,0 +1,8 @@
+[run]
+omit =
+    api_v1/admin.py
+
+
+[report]
+omit =
+    api_v1/admin.py

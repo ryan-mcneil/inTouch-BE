@@ -200,6 +200,7 @@ JSON Response (limited attributes shown):
 ```
 #### Suggested Contacts
 A query can be made for suggested contacts, determined by nextReminder and priority, for a user specified leadTime = 7 (days), with any or all of the following attributes:
+
 ```graphql
 query {
   contactSuggestions(leadTime: 7) {
@@ -216,14 +217,15 @@ query {
       value
       preferred
     }
-		occasions {
-			id
-			description
-			date
-		}
+    occasions {
+      id
+      description
+      date
+    }
   }
 }
 ```
+
 JSON Response (limited attributes shown):
 ```json
 {
@@ -248,6 +250,7 @@ JSON Response (limited attributes shown):
   }
 }
 ```
+
 ### Mutations
 #### Create Contact
 A contact can be created with a name (required) and any additional attributes with the following query:

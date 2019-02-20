@@ -8,3 +8,6 @@ djangorestframework
 gunicorn
 django-heroku
 django-cors-headers
+snapshottest
+django-nose
+coverage
