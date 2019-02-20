@@ -14,6 +14,7 @@
 		* [Queries](#queries)
 			* [Contacts](#contacts)
 			* [Single Contact](#single-contact)
+			* [Suggested Contacts](#suggested-contacts)
 		* [Mutations](#mutations)
 			* [Create Contact](#create-contact)
 			* [Update Contact](#update-contact)
@@ -160,7 +161,7 @@ JSON Response (limited attributes):
 }
 ```
 #### Single Contact
-A single contact can be queried with any of the same attributes:
+A single contact with id = 1 can be queried with any of the same attributes:
 ```graphql
 query {
   contact(id: 1) {
@@ -180,7 +181,7 @@ query {
   }
 }
 ```
-JSON Response (limited attributes):
+JSON Response (limited attributes shown):
 ```json
 {
   "data": {
@@ -194,6 +195,56 @@ JSON Response (limited attributes):
         }
       ]
     }
+  }
+}
+```
+#### Suggested Contacts
+A query can be made for suggested contacts, determined by nextReminder and priority, for a user specified leadTime = 7 (days), with any or all of the following attributes:
+```graphql
+query {
+  contactSuggestions(leadTime: 7) {
+    id
+    name
+    frequency
+    priority
+    nextReminder
+    lastContacted
+    notes
+    contactDetails {
+      id
+      label
+      value
+      preferred
+    }
+		occasions {
+			id
+			description
+			date
+		}
+  }
+}
+```
+JSON Response (limited attributes shown):
+```json
+{
+  "data": {
+    "contactSuggestions": [
+      {
+        "id": "1",
+        "name": "Mom",
+        "contact_details": [
+          {
+            "label": "phone",
+            "value": "123-456-7890",
+            "preferred": true,
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "Dad"
+      }
+    ]
   }
 }
 ```
