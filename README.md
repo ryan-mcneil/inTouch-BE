@@ -1,6 +1,6 @@
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/ryan-mcneil/inTouch-BE.svg?columns=all)](https://waffle.io/ryan-mcneil/inTouch-BE)
 
-@import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false}
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 <!-- code_chunk_output -->
 
 * [Description](#description)
@@ -14,17 +14,27 @@
 		* [Queries](#queries)
 			* [Contacts](#contacts)
 			* [Single Contact](#single-contact)
+			* [Suggested Contacts](#suggested-contacts)
+			* [Upcoming Occasions](#upcoming-occasions)
 		* [Mutations](#mutations)
 			* [Create Contact](#create-contact)
 			* [Update Contact](#update-contact)
 			* [Delete Contact](#delete-contact)
+			* [Create Contact Detail](#create-contact-detail)
+			* [Update Contact Detail](#update-contact-detail)
+			* [Delete Contact Detail](#delete-contact-detail)
+			* [Create Occasion](#create-occasion)
+			* [Update Occasion](#update-occasion)
+			* [Delete Occasion](#delete-occasion)
 * [For Contributors](#for-contributors)
 	* [Backend Tech Stack](#backend-tech-stack)
 	* [Getting Started](#getting-started)
 	* [Setup](#setup)
+	* [Pull Requests](#pull-requests)
 	* [Core Team](#core-team)
 
 <!-- /code_chunk_output -->
+
 
 # Description
 
@@ -105,7 +115,7 @@ This will return :
 This token is used for `Authorization` of future requests.
 
 #### Authorize a Request
-Endpoints requiring authorization (i.e. the rest of then) must be sent with the header:
+Endpoints requiring authorization (i.e. the rest of them) must be sent with the header:
 ```json
 "Authorization": "JWT %user-access-token%"
 ```
@@ -130,6 +140,11 @@ query {
       value
       preferred
     }
+    occasions {
+      id
+      description
+      date
+    }
   }
 }
 ```
@@ -145,7 +160,13 @@ JSON Response (limited attributes):
           {
             "label": "phone",
             "value": "123-456-7890",
-            "preferred": true,
+            "preferred": true
+          }
+        ],
+        "occasions": [
+          {
+            "description": "birthday",
+            "date": "1970-02-28"
           }
         ]
       },
@@ -158,7 +179,7 @@ JSON Response (limited attributes):
 }
 ```
 #### Single Contact
-A single contact can be queried with any of the same attributes:
+A single contact with id = 1 can be queried with any of the same attributes:
 ```graphql
 query {
   contact(id: 1) {
@@ -175,10 +196,15 @@ query {
       value
       preferred
     }
+    occasions {
+      id
+      description
+      date
+    }
   }
 }
 ```
-JSON Response (limited attributes):
+JSON Response (limited attributes shown):
 ```json
 {
   "data": {
@@ -190,18 +216,83 @@ JSON Response (limited attributes):
           "label": "phone",
           "value": "123-456-7890",
         }
+      ],
+      "occasions": [
+      	{
+          "description": "birthday",
+          "date": "1970-02-28"
+      	}
       ]
     }
   }
 }
 ```
+#### Suggested Contacts
+A query can be made for suggested contacts, determined by nextReminder and priority, for a user specified leadTime = 7 (days), with any or all of the following attributes:
+
+```graphql
+query {
+  contactSuggestions(leadTime: 7) {
+    id
+    name
+    frequency
+    priority
+    nextReminder
+    lastContacted
+    notes
+    contactDetails {
+      id
+      label
+      value
+      preferred
+    }
+    occasions {
+      id
+      description
+      date
+    }
+  }
+}
+```
+
+JSON Response (limited attributes shown):
+```json
+{
+  "data": {
+    "contactSuggestions": [
+      {
+        "id": "1",
+        "name": "Mom",
+        "contact_details": [
+          {
+            "label": "phone",
+            "value": "123-456-7890",
+            "preferred": true
+          }
+        ],
+        "occasions": [
+          {
+            "description": "birthday",
+            "date": "1970-02-28"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "Dad"
+      }
+    ]
+  }
+}
+```
+
 ### Mutations
 #### Create Contact
 A contact can be created with a name (required) and any additional attributes with the following query:
 
 ```graphql
-mutation CreateContact($contactInput:ContactInput!) {
-  createContact(input:$contactInput){
+mutation CreateContact($input:CreateContactInput!) {
+  createContact(input:$input){
     ok
     contact {
       name
@@ -212,7 +303,7 @@ mutation CreateContact($contactInput:ContactInput!) {
 and variables:
 ```json
 {
-  "contactInput": {
+  "input": {
     "name": "Dad",
     "notes": "Some Notes"
   }
@@ -235,8 +326,8 @@ JSON Response:
 A contact can be updated by providing the contact id and any or all attributes with the following query:
 
 ```graphql
-mutation UpdateContact($id:Int!, $contactInput:ContactInput!) {
-  updateContact(id:$id, input:$contactInput){
+mutation UpdateContact($id:Int!, $input:UpdateContactInput!) {
+  updateContact(id:$id, input:$input){
     ok
     contact {
       name
@@ -247,7 +338,7 @@ mutation UpdateContact($id:Int!, $contactInput:ContactInput!) {
 and variables:
 ```json
 {
-  "contactInput": {
+  "input": {
     "name": "Father",
     "priority": "3",
     "lastContacted": "2019-03-02",
@@ -294,43 +385,253 @@ JSON Response:
   }
 }
 ```
+#### Create Contact Detail
+A contact detail must be created with a label and value with the following query:
+
+```graphql
+mutation CreateContactDetail($contact_id:Int!, $input:CreateContactDetailInput!) {
+  createContactDetail(contactId:$contact_id, input:$input){
+    ok
+    contactDetail {
+      label
+    }
+  }
+}
+```
+and variables:
+```json
+{
+  "input": {
+    "label": "Phone",
+    "value": "303-123-4567"
+  },
+  "contact_id": 1
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "createContactDetail": {
+      "ok": true,
+      "contactDetail": {
+        "label": "Phone"
+      }
+    }
+  }
+}
+```
+#### Update Contact Detail
+A contact detail can be updated with a new label and/or value with the following query:
+
+```graphql
+mutation updateContactDetail($id:Int!, $input:UpdateContactDetailInput!) {
+  updateContactDetail(id:$id, input:$input){
+    ok
+    contactDetail {
+      label
+    }
+  }
+}
+```
+and variables:
+```json
+{
+  "input": {
+    "label": "Cell",
+    "value": "303-123-4568"
+  },
+  "id": 1
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "updateContactDetail": {
+      "ok": true,
+      "contactDetail": {
+        "label": "Cell"
+      }
+    }
+  }
+}
+```
+#### Delete Contact Detail
+A contact detail can be deleted by providing the contact detail id with the following query:
+```graphql
+mutation DeleteContactDetail($id:Int!) {
+  deleteContactDetail(id:$id){
+    ok
+  }
+}
+```
+and variables:
+```json
+{
+  "id": 3
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "deleteContactDetail": {
+      "ok": true,
+    }
+  }
+}
+```
+
+#### Create Occasion
+A occasion must be created with a description and date with the following query:
+
+```graphql
+mutation CreateOccasion($contact_id:Int!, $input:CreateOccasionInput!) {
+  createOccasion(contactId:$contact_id, input:$input){
+    ok
+    occasion {
+      description
+    }
+  }
+}
+```
+and variables:
+```json
+{
+  "input": {
+    "description": "birthday",
+    "date": "1960-05-07"
+  },
+  "contact_id": 1
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "createOccasion": {
+      "ok": true,
+      "occasion": {
+        "description": "birthday"
+      }
+    }
+  }
+}
+```
+#### Update Occasion
+A occasion can be updated with a new description and/or date with the following query:
+
+```graphql
+mutation updateOccasion($id:Int!, $input:UpdateOccasionInput!) {
+  updateOccasion(id:$id, input:$input){
+    ok
+    occasion {
+      description
+    }
+  }
+}
+```
+and variables:
+```json
+{
+  "input": {
+    "description": "birthday",
+    "date": "1960-05-07"
+  },
+  "id": 1
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "updateOccasion": {
+      "ok": true,
+      "occasion": {
+        "description": "birthday"
+      }
+    }
+  }
+}
+```
+#### Delete Occasion
+A occasion can be deleted by providing the occasion id with the following query:
+```graphql
+mutation DeleteOccasion($id:Int!) {
+  deleteOccasion(id:$id){
+    ok
+  }
+}
+```
+and variables:
+```json
+{
+  "id": 3
+}
+```
+JSON Response:
+```json
+{
+  "data": {
+    "deleteOccasion": {
+      "ok": true,
+    }
+  }
+}
+```
 
 # For Contributors
 ## Backend Tech Stack
-  - Django 2.1.7
-  - Python 3.2.7
-  - GraphQL with Graphene
+  - Django v2.1.7
+  - Python v3.2.7
+  - GraphQL with Graphene v2.1.3
+  - PostgreSQL v11.1
 
 ## Getting Started
 This is an ongoing OpenSource project that we want to make as useful as possible without experiencing feature bloat. Contributions are welcome and encouraged! To make it as easy as possible for future contributors, we're committed to keeping our test-coverage high and our tech-debt low, so pull requests will be thoroughly reviewed and vetted before merging.
 
 ## Setup
 
-Set up a python virtual environment where-ever you want it to live:
-```
-
-```
-
-Next, set your DEBUG environment variable to True (for the virtual environment).
-This lets you use a generic secret_key.
+Set up a virtual debug environment where-ever you want it to live, then activate it:
 ```bash
-$ export DEBUG=True
-```
+$ python3 -m venv $PATH_TO_VENV/dj-env
+$ echo "export DEBUG=True" >> $PATH_TO_VENV/dj-env/postactivate
+$ source <PATH_TO_VENV>/bin/activate
 
-Clone down the repo, activate the virtual environment, and install dependencies:
+```
+We like to make a `dj-env` for Django specifically. The second command creates a script to run after the virtual environment is activated. You can also set up Django specific bash aliases in this file.
+
+The `DEBUG=True` is used in `settings.py` to use a generic secret_key for local development.
+
+Next, clone down the repo and install dependencies:
 ```bash
 $ git clone git@github.com:ryan-mcneil/inTouch-BE.git
 $ cd inTouch-BE
-$ source <PATH_TO_VENV>/bin/activate
 $ pip install -r requirements.txt
 ```
-
-
-Next, set up a local database
+Set up a local database:
 ```bash
 $ psql
 => CREATE DATABASE in_touch_dev
 ```
+Then run migrations:
+```bash
+$ python manage.py migrate
+```
+Now you should be able to run the server locally:
+```
+$ python manage.py runserver
+```
+Visit http://localhost:8000/api/v1/data to interact using the GraphiQL GUI and view the schema documentation.
+We recommend creating a superuser for your local server:
+```bash
+$ python manage.py createsuperuser
+```
+After that, you can visit http://localhost:8000/admin and log in. The admin account you log in as will be used for authenticating any requests made through the GraphiQL interface. To directly manipulate the authorization header, we recommend using [Insomnia](https://insomnia.rest/download/#mac), which was designed with GraphQL in mind. [Postman](https://www.getpostman.com/) is an excellent choice also.
+
+## Pull Requests
+When you make changes you want to incorporate, please submit a PR to the `dev` branch. We have a live staging deployment on Heroku that we use to check new functionality and compatibility before deploying to master and deploying to production. (At the moment, we actually don't have a production deployment, but we will soon!)
 
 ## Core Team
 * [Ryan McNeil](https://github.com/ryan-mcneil)

@@ -1,0 +1,13 @@
+Django
+postgres
+psycopg2-binary
+psycopg2
+graphene_django
+django-graphql-jwt
+djangorestframework
+gunicorn
+django-heroku
+django-cors-headers
+snapshottest
+django-nose
+coverage

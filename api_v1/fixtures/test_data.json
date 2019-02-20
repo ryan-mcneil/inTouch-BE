@@ -1,0 +1,66 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$120000$bfua81aGiG8G$yz0Efb9IaO0PHIks3t9kqmIORzJxbRZGIu4BovMgEUE=",
+      "username": "joe",
+      "email": ""
+    }
+  },
+  {
+    "model": "api_v1.contact",
+    "pk": 1,
+    "fields": {
+      "user_id": 1,
+      "name": "Monty",
+      "notes": "I've got a lovely bunch of coconuts.",
+      "priority": 1,
+      "frequency": 12
+    }
+  },
+  {
+    "model": "api_v1.contact",
+    "pk": 2,
+    "fields": {
+      "user_id": 1,
+      "name": "Python",
+      "notes": "I'll bite your leg off!",
+      "priority": 3,
+      "frequency": 18
+    }
+  },
+  {
+    "model": "api_v1.contact",
+    "pk": 3,
+    "fields": {
+      "user_id": 1,
+      "name": "Pepperpots",
+      "notes": "She turned me into a newt!",
+      "priority": 5,
+      "frequency": 2
+    }
+  },
+  {
+    "model": "api_v1.contact",
+    "pk": 4,
+    "fields": {
+      "user_id": 1,
+      "name": "The Knights",
+      "notes": "Ni.",
+      "priority": 2,
+      "frequency": 9
+    }
+  },
+  {
+    "model": "api_v1.contact",
+    "pk": 5,
+    "fields": {
+      "user_id": 1,
+      "name": "Mr. Badger",
+      "notes": "I won't ruin your sketch.",
+      "priority": 4,
+      "frequency": 100
+    }
+  }
+]
