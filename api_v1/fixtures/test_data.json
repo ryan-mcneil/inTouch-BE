@@ -17,8 +17,8 @@
       "notes": "I've got a lovely bunch of coconuts.",
       "priority": 1,
       "frequency": 12,
-      "lastContacted":"2019-02-20",
-      "nextReminder":"2019-02-20",
+      "last_contacted":"2019-02-20",
+      "next_reminder":"2019-02-20"
     }
   },
   {
@@ -30,8 +30,8 @@
       "notes": "I'll bite your leg off!",
       "priority": 3,
       "frequency": 18,
-      "lastContacted":"2019-02-20",
-      "nextReminder":"2019-02-20",
+      "last_contacted":"2019-02-20",
+      "next_reminder":"2019-02-20"
     }
   },
   {
@@ -43,8 +43,8 @@
       "notes": "She turned me into a newt!",
       "priority": 5,
       "frequency": 2,
-      "lastContacted":"2019-02-20",
-      "nextReminder":"2019-02-20",
+      "last_contacted":"2019-02-20",
+      "next_reminder":"2019-02-20"
     }
   },
   {
@@ -56,8 +56,8 @@
       "notes": "Ni.",
       "priority": 2,
       "frequency": 9,
-      "lastContacted":"2019-02-20",
-      "nextReminder":"2019-02-20",
+      "last_contacted":"2019-02-20",
+      "next_reminder":"2019-02-20"
     }
   },
   {
@@ -69,8 +69,8 @@
       "notes": "I won't ruin your sketch.",
       "priority": 4,
       "frequency": 100,
-      "lastContacted":"2019-02-20",
-      "nextReminder":"2019-02-20",
+      "last_contacted":"2019-02-20",
+      "next_reminder":"2019-02-20"
     }
   }
 ]
