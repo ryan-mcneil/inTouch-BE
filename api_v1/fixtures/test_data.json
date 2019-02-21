@@ -16,7 +16,9 @@
       "name": "Monty",
       "notes": "I've got a lovely bunch of coconuts.",
       "priority": 1,
-      "frequency": 12
+      "frequency": 12,
+      "last_contacted":"2019-02-20",
+      "next_reminder":"2019-02-20"
     }
   },
   {
@@ -27,7 +29,9 @@
       "name": "Python",
       "notes": "I'll bite your leg off!",
       "priority": 3,
-      "frequency": 18
+      "frequency": 18,
+      "last_contacted":"2019-02-20",
+      "next_reminder":"2019-02-20"
     }
   },
   {
@@ -38,7 +42,9 @@
       "name": "Pepperpots",
       "notes": "She turned me into a newt!",
       "priority": 5,
-      "frequency": 2
+      "frequency": 2,
+      "last_contacted":"2019-02-20",
+      "next_reminder":"2019-02-20"
     }
   },
   {
@@ -49,7 +55,9 @@
       "name": "The Knights",
       "notes": "Ni.",
       "priority": 2,
-      "frequency": 9
+      "frequency": 9,
+      "last_contacted":"2019-02-20",
+      "next_reminder":"2019-02-20"
     }
   },
   {
@@ -60,7 +68,9 @@
       "name": "Mr. Badger",
       "notes": "I won't ruin your sketch.",
       "priority": 4,
-      "frequency": 100
+      "frequency": 100,
+      "last_contacted":"2019-02-20",
+      "next_reminder":"2019-02-20"
     }
   }
 ]
